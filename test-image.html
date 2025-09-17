@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image Test</title>
+    <style>
+        .container {
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+        }
+        .test-box {
+            border: 2px solid red;
+            padding: 10px;
+        }
+        img {
+            width: 300px;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    <h1>Testing Different Image Sources</h1>
+    <div class="container">
+        <div class="test-box">
+            <h3>Test 1: ianmol.jpg</h3>
+            <img src="ianmol.jpg" alt="Test 1">
+        </div>
+        <div class="test-box">
+            <h3>Test 2: ./ianmol.jpg</h3>
+            <img src="./ianmol.jpg" alt="Test 2">
+        </div>
+        <div class="test-box">
+            <h3>Test 3: ianmol-small.jpg</h3>
+            <img src="ianmol-small.jpg" alt="Test 3">
+        </div>
+        <div class="test-box">
+            <h3>Test 4: profile-photo.jpg</h3>
+            <img src="profile-photo.jpg" alt="Test 4">
+        </div>
+        <div class="test-box">
+            <h3>Test 5: Working Stock Image</h3>
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face" alt="Stock">
+        </div>
+    </div>
+    <p>Check which images load and which show as broken. This will help us identify the issue.</p>
+</body>
+</html>
+
