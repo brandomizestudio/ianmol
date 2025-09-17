@@ -157,16 +157,95 @@ function animateCounters() {
     });
 }
 
-// Parallax effect for hero background
-window.addEventListener('scroll', function() {
-    const scrollTop = window.pageYOffset;
+// Enhanced hero animations and parallax effects
+function initHeroAnimations() {
     const heroSection = document.querySelector('.hero');
+    const heroImage = document.querySelector('.hero-image');
+    const scrollIndicator = document.querySelector('.scroll-indicator');
+    const floatingElements = document.querySelectorAll('.floating-element');
     
-    if (heroSection) {
-        const parallaxSpeed = 0.5;
+    if (!heroSection) return;
+
+    window.addEventListener('scroll', function() {
+        const scrollTop = window.pageYOffset;
+        const heroHeight = heroSection.offsetHeight;
+        const scrollProgress = Math.min(scrollTop / heroHeight, 1);
+        
+        // Parallax effect for hero background
+        const parallaxSpeed = 0.3;
         heroSection.style.transform = `translateY(${scrollTop * parallaxSpeed}px)`;
+        
+        // Image parallax effect
+        if (heroImage) {
+            heroImage.style.transform = `translateY(${scrollTop * 0.2}px)`;
+        }
+        
+        // Fade out scroll indicator
+        if (scrollIndicator) {
+            scrollIndicator.style.opacity = Math.max(1 - scrollProgress * 2, 0);
+        }
+        
+        // Animate floating elements
+        floatingElements.forEach((element, index) => {
+            const speed = 0.1 + (index * 0.05);
+            element.style.transform = `translateY(${scrollTop * speed}px) rotate(${scrollTop * 0.1}deg)`;
+        });
+    });
+}
+
+// Scroll indicator click handler
+function initScrollIndicator() {
+    const scrollIndicator = document.querySelector('.scroll-indicator');
+    const aboutSection = document.querySelector('#about');
+    
+    if (scrollIndicator && aboutSection) {
+        scrollIndicator.addEventListener('click', function() {
+            aboutSection.scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'start'
+            });
+        });
     }
-});
+}
+
+// Enhanced image loading with fallback
+function initImageLoading() {
+    const profileImg = document.getElementById('hero-profile-img');
+    if (!profileImg) return;
+    
+    // Create a promise for image loading
+    const imageLoaded = new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = () => reject(new Error('Image failed to load'));
+        img.src = profileImg.src;
+    });
+    
+    // Handle successful loading
+    imageLoaded.then(() => {
+        profileImg.style.opacity = '1';
+        profileImg.style.transform = 'scale(1)';
+    }).catch(() => {
+        // Fallback: create a placeholder
+        const container = profileImg.parentElement;
+        const placeholder = document.createElement('div');
+        placeholder.style.cssText = `
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #007aff, #5ac8fa);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 4rem;
+            font-weight: bold;
+        `;
+        placeholder.textContent = 'I';
+        profileImg.style.display = 'none';
+        container.appendChild(placeholder);
+    });
+}
 
 // Smooth reveal animations for sections
 function revealSections() {
@@ -432,6 +511,12 @@ function initTextReveal() {
 
 // Initialize all functions when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
+    // Hero section initialization
+    initHeroAnimations();
+    initScrollIndicator();
+    initImageLoading();
+    
+    // Other animations and functionality
     animateOnScroll();
     animateCounters();
     revealSections();
