@@ -157,94 +157,55 @@ function animateCounters() {
     });
 }
 
-// Enhanced hero animations and parallax effects
+// Simple hero initialization (no scroll effects)
 function initHeroAnimations() {
-    const heroSection = document.querySelector('.hero');
-    const heroImage = document.querySelector('.hero-image');
-    const scrollIndicator = document.querySelector('.scroll-indicator');
-    const floatingElements = document.querySelectorAll('.floating-element');
-    
-    if (!heroSection) return;
-
-    window.addEventListener('scroll', function() {
-        const scrollTop = window.pageYOffset;
-        const heroHeight = heroSection.offsetHeight;
-        const scrollProgress = Math.min(scrollTop / heroHeight, 1);
-        
-        // Parallax effect for hero background
-        const parallaxSpeed = 0.3;
-        heroSection.style.transform = `translateY(${scrollTop * parallaxSpeed}px)`;
-        
-        // Image parallax effect
-        if (heroImage) {
-            heroImage.style.transform = `translateY(${scrollTop * 0.2}px)`;
-        }
-        
-        // Fade out scroll indicator
-        if (scrollIndicator) {
-            scrollIndicator.style.opacity = Math.max(1 - scrollProgress * 2, 0);
-        }
-        
-        // Animate floating elements
-        floatingElements.forEach((element, index) => {
-            const speed = 0.1 + (index * 0.05);
-            element.style.transform = `translateY(${scrollTop * speed}px) rotate(${scrollTop * 0.1}deg)`;
-        });
-    });
-}
-
-// Scroll indicator click handler
-function initScrollIndicator() {
-    const scrollIndicator = document.querySelector('.scroll-indicator');
-    const aboutSection = document.querySelector('#about');
-    
-    if (scrollIndicator && aboutSection) {
-        scrollIndicator.addEventListener('click', function() {
-            aboutSection.scrollIntoView({ 
-                behavior: 'smooth',
-                block: 'start'
-            });
-        });
-    }
+    // Hero animations are now handled purely with CSS
+    // No scroll effects to avoid mobile issues
 }
 
 // Enhanced image loading with fallback
 function initImageLoading() {
     const profileImg = document.getElementById('hero-profile-img');
-    if (!profileImg) return;
+    const imageCard = document.querySelector('.image-card');
     
-    // Create a promise for image loading
-    const imageLoaded = new Promise((resolve, reject) => {
-        const img = new Image();
-        img.onload = () => resolve(img);
-        img.onerror = () => reject(new Error('Image failed to load'));
-        img.src = profileImg.src;
-    });
+    if (!profileImg || !imageCard) return;
     
-    // Handle successful loading
-    imageLoaded.then(() => {
-        profileImg.style.opacity = '1';
-        profileImg.style.transform = 'scale(1)';
-    }).catch(() => {
-        // Fallback: create a placeholder
-        const container = profileImg.parentElement;
-        const placeholder = document.createElement('div');
-        placeholder.style.cssText = `
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #007aff, #5ac8fa);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 4rem;
-            font-weight: bold;
-        `;
-        placeholder.textContent = 'I';
-        profileImg.style.display = 'none';
-        container.appendChild(placeholder);
-    });
+    // Set initial state
+    profileImg.style.opacity = '0';
+    
+    // List of images to try in order
+    const imageSources = ['profile.png', 'ianmol.png', 'ianmol-small.jpg'];
+    let currentIndex = 0;
+    
+    function tryLoadImage(src) {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => resolve(src);
+            img.onerror = () => reject(new Error(`Failed to load ${src}`));
+            img.src = src;
+        });
+    }
+    
+    async function loadImageWithFallback() {
+        for (let i = currentIndex; i < imageSources.length; i++) {
+            try {
+                await tryLoadImage(imageSources[i]);
+                profileImg.src = imageSources[i];
+                profileImg.style.opacity = '1';
+                console.log(`Successfully loaded: ${imageSources[i]}`);
+                return;
+            } catch (error) {
+                console.log(`Failed to load: ${imageSources[i]}`);
+            }
+        }
+        
+        // If all images fail, hide the placeholder text and show a nice gradient
+        imageCard.style.background = 'linear-gradient(135deg, #007aff, #5ac8fa)';
+        imageCard.style.color = 'white';
+        console.log('All images failed to load, showing fallback');
+    }
+    
+    loadImageWithFallback();
 }
 
 // Smooth reveal animations for sections
@@ -511,9 +472,7 @@ function initTextReveal() {
 
 // Initialize all functions when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    // Hero section initialization
-    initHeroAnimations();
-    initScrollIndicator();
+    // Hero section initialization (simplified)
     initImageLoading();
     
     // Other animations and functionality
